@@ -23,8 +23,8 @@ pub enum ProverError {
 /// Starts the prover, which can be anonymous or connected to the Nexus Orchestrator.
 ///
 /// # Arguments
-/// * `orchestrator_client` - The client to interact with the Nexus Orchestrator.
-/// * `node_id` - The ID of the node to connect to. If `None`, the prover will run in anonymous mode.
+/// * orchestrator_client - The client to interact with the Nexus Orchestrator.
+/// * node_id - The ID of the node to connect to. If None, the prover will run in anonymous mode.
 pub async fn start_prover(
     environment: Environment,
     node_id: Option<u64>,
@@ -153,6 +153,10 @@ async fn authenticated_proving(
         .map_err(|e| ProverError::Orchestrator(format!("Failed to fetch proof task: {}", e)))?;
 
     let public_input: u32 = task.public_inputs.first().cloned().unwrap_or_default() as u32;
+
+    // Thêm log màu xanh để dễ debug
+    info!("{}", "Trying to prove".blue());
+
     let proof_bytes = prove_helper(stwo_prover, public_input)?;
     let proof_hash = format!("{:x}", Keccak256::digest(&proof_bytes));
     orchestrator_client
