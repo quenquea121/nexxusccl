@@ -1,0 +1,73 @@
+// Copyright (c) 2025 Nexus. All rights reserved.
+//
+// If you use this protocol to communicate with Nexus's servers,
+// you must agree to the Terms of Use: https://nexus.xyz/terms-of-use
+
+syntax = "proto3";
+
+package nexus.orchestrator;
+
+enum NodeType {
+  // The node is a web prover.
+  WEB_PROVER = 0;
+
+  // The node is a CLI prover.
+  CLI_PROVER = 1;
+}
+
+// Request a prover task.
+message GetProofTaskRequest {
+  // This node's ID.
+  string node_id = 1;
+
+  // The type of this node.
+  NodeType node_type = 2;
+}
+
+// A Prover task.
+message GetProofTaskResponse {
+  // Program id. (Assuming client-side default programs)
+  string program_id = 1;
+
+  // Public inputs to the program.
+  bytes public_inputs = 2;
+
+  // The task's ID.
+  string task_id = 3;
+}
+
+// Submit the result of a prover task.
+message SubmitProofRequest {
+  reserved 1;
+  reserved "node_id";
+
+  // The type of this node.
+  NodeType node_type = 2;
+
+  // Hash of the proof.
+  string proof_hash = 3;
+
+  // Telemetry data about the node
+  NodeTelemetry node_telemetry = 4;
+
+  // ZK proof of the proof activity
+  bytes proof = 5;
+
+  // The task's ID.
+  string task_id = 6;
+}
+
+// Performance stats of a node.
+message NodeTelemetry {
+  // Flops per second
+  optional int32 flops_per_sec = 1;
+
+  // Memory used in bytes for the proof activity
+  optional int32 memory_used = 2;
+
+  // Memory capacity in bytes of the node
+  optional int32 memory_capacity = 3;
+
+  // Geo location of the node
+  optional string location = 4;
+}
